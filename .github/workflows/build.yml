@@ -3,27 +3,29 @@ name: Build EXE
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
-
+    
     steps:
     - uses: actions/checkout@v3
-
+    
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-
-    - name: Install libs
+    
+    - name: Install dependencies
       run: pip install pyinstaller requests
-
-    - name: Build EXE
-      run: pyinstaller --onefile --noconsole tool_vip.py
-
-    - name: Upload EXE
+    
+    - name: Build EXE (Single File)
+      run: pyinstaller --onefile --windowed --name "EarnApp Checker" --distpath ./dist tool_vip.py
+    
+    - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
         name: earnapp-exe
         path: dist/*.exe
+        retention-days: 30
